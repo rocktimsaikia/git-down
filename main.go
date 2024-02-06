@@ -11,9 +11,8 @@ import (
 )
 
 type UrlData struct {
-	user_name string
-	repo_name string
-
+	user_name   string
+	repo_name   string
 	branch_name string
 	dirs        []string
 }
@@ -34,9 +33,6 @@ func GetUrlData(url string) UrlData {
 		dirs:        data[3:],
 	}
 }
-
-// https://github.com/Mangeshrex/rxfetch/tree/main/ttf-material-design-icons
-// https://api.github.com/repos/Mangeshrex/rxfetch/contents/ttf-material-design-icons
 
 func StructApiUrl(url_data UrlData) string {
 	dir_string := strings.Join(url_data.dirs, "/")
