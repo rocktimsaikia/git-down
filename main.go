@@ -17,6 +17,7 @@ type UrlData struct {
 	dirs        []string
 }
 
+// Get the required data from the given Github URL
 func GetUrlData(url string) UrlData {
 	chunks := strings.Split(url, "/")
 	ignored_chunks := []string{"https:", "github.com", "tree", ""}
@@ -34,12 +35,14 @@ func GetUrlData(url string) UrlData {
 	}
 }
 
+// Construct the API URL from the given URL data
 func StructApiUrl(url_data UrlData) string {
 	dir_string := strings.Join(url_data.dirs, "/")
 	download_url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", url_data.user_name, url_data.repo_name, dir_string, url_data.branch_name)
 	return download_url
 }
 
+// Download a file from Github
 func DownloadFile(url string, dest string) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -47,17 +50,19 @@ func DownloadFile(url string, dest string) error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Error: %s", resp.Status)
+	}
+
+	// Create the destination file
 	file, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
+	// Copy the response body to the destination file
 	_, err = io.Copy(file, resp.Body)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
