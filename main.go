@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/briandowns/spinner"
+	"github.com/fatih/color"
 
 	"encoding/json"
 	"fmt"
@@ -127,6 +128,6 @@ func main() {
 		}
 		s.Suffix = fmt.Sprintf(" Downloading %s", file_name)
 	}
-	s.FinalMSG = "✔ Downloaded all files.\n"
+	s.FinalMSG = color.GreenString("✔ Downloaded all files.\n")
 	s.Stop()
 }
