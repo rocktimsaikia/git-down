@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/briandowns/spinner"
+
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,6 +10,7 @@ import (
 	"os"
 	"slices"
 	"strings"
+	"time"
 )
 
 type UrlData struct {
@@ -89,6 +92,11 @@ func main() {
 	url_data := GetUrlData(args[0])
 	api_url := StructApiUrl(url_data)
 
+	s := spinner.New(spinner.CharSets[7], 100*time.Millisecond)
+	s.Suffix = " Retrieving data from Github"
+	s.Color("green")
+	s.Start()
+
 	resp, err := http.Get(api_url)
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -108,6 +116,7 @@ func main() {
 	download_dir := &url_data.dirs[len(url_data.dirs)-1]
 	os.Mkdir(*download_dir, os.ModePerm)
 
+	s.Suffix = " Downloading files from Github"
 	for _, data := range list_data {
 		file_name := data["name"]
 		download_url := data["download_url"]
@@ -116,6 +125,8 @@ func main() {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		}
-		fmt.Println("Downloaded ", file_name, " to ", download_file_name)
+		s.Suffix = fmt.Sprintf(" Downloaded %s", file_name)
 	}
+	s.FinalMSG = "✔ Downloaded all files.\n"
+	s.Stop()
 }
