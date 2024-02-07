@@ -125,7 +125,7 @@ func main() {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		}
-		s.Suffix = fmt.Sprintf(" Downloaded %s", file_name)
+		s.Suffix = fmt.Sprintf(" Downloading %s", file_name)
 	}
 	s.FinalMSG = "✔ Downloaded all files.\n"
 	s.Stop()
