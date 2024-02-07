@@ -38,7 +38,13 @@ func GetUrlData(url string) UrlData {
 // Construct the API URL from the given URL data
 func StructApiUrl(url_data UrlData) string {
 	dir_string := strings.Join(url_data.dirs, "/")
-	download_url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", url_data.user_name, url_data.repo_name, dir_string, url_data.branch_name)
+	download_url := fmt.Sprintf(
+		"https://api.github.com/repos/%s/%s/contents/%s?ref=%s",
+		url_data.user_name,
+		url_data.repo_name,
+		dir_string,
+		url_data.branch_name,
+	)
 	return download_url
 }
 
