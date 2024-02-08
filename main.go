@@ -1,5 +1,14 @@
 package main
 
+/*
+git-down 	<github-url> <destination-dir>
+
+TODOs:
+1. If destination-dir is not provided, the files will be downloaded to the current directory under a folder with the name of the last directory in the github-url.
+2. If the destination-dir is provided, and the directory does not exist, it will be created and the files will be downloaded to that directory.
+3. If the destination-dir is provided, and the directory exists, the files will be downloaded to that directory.
+*/
+
 import (
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
