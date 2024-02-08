@@ -1,19 +1,11 @@
 package main
 
-/*
-git-down 	<github-url> <destination-dir>
-
-TODOs:
-1. If destination-dir is not provided, the files will be downloaded to the current directory under a folder with the name of the last directory in the github-url.
-2. If the destination-dir is provided, and the directory does not exist, it will be created and the files will be downloaded to that directory.
-3. If the destination-dir is provided, and the directory exists, the files will be downloaded to that directory.
-*/
-
 import (
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
 
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -73,29 +65,32 @@ func DownloadFile(url string, dest string) error {
 		return fmt.Errorf("Error: %s", resp.Status)
 	}
 
-	// Create the destination file
 	file, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	// Copy the response body to the destination file
 	_, err = io.Copy(file, resp.Body)
 	return nil
 }
 
 func main() {
-	args := os.Args[1:]
+	// Flags
+	var destination string
+	flag.StringVar(&destination, "d", "", "Destination directory")
+	flag.Parse()
+
+	// Args
+	args := flag.Args()
 	if len(args) == 0 {
-		fmt.Println("Please provide a github url")
+		fmt.Println("Please provide a Github URL!")
 		return
 	}
-
 	github_url := args[0]
 
 	if github_url == "" {
-		fmt.Println("Please provide a github url")
+		fmt.Println("Please provide a Github URL!")
 		return
 	}
 
@@ -103,6 +98,7 @@ func main() {
 	api_url := StructApiUrl(url_data)
 
 	s := spinner.New(spinner.CharSets[7], 100*time.Millisecond)
+	s.Prefix = "\n"
 	s.Suffix = " Retrieving data from Github"
 	s.Color("green")
 	s.Start()
@@ -124,6 +120,10 @@ func main() {
 	json.Unmarshal([]byte(json_data), &list_data)
 
 	download_dir := &url_data.dirs[len(url_data.dirs)-1]
+	if destination != "" {
+		updated_download_dir := fmt.Sprintf("%s/%s", destination, *download_dir)
+		download_dir = &updated_download_dir
+	}
 	os.Mkdir(*download_dir, os.ModePerm)
 
 	s.Suffix = " Downloading files from Github"
@@ -137,6 +137,6 @@ func main() {
 		}
 		s.Suffix = fmt.Sprintf(" Downloading %s", file_name)
 	}
-	s.FinalMSG = color.GreenString("✔ Downloaded all files.\n")
+	s.FinalMSG = color.GreenString(fmt.Sprintf("\n✔ Downloaded all files to %s\n", *download_dir))
 	s.Stop()
 }
