@@ -1,4 +1,4 @@
-module git-down
+module github.com/rocktimsaikia/git-down
 
 go 1.21.6
 
